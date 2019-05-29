@@ -10,13 +10,21 @@ from unittest import TestCase
 
 
 class TestCodeStyle(TestCase):
-    def testStyle(self):
+    def runTest(self):
         style = pycodestyle.StyleGuide(quiet=False)
-        file = os.path.join('D:/eclipse-workspace', 'SSA', 'Main',
-                            'View', 'Layout.py')
-        result = style.check_files([file,])
+        projectDir = os.path.split(
+            os.path.split(os.path.dirname(__file__))[0])[0]
+        mainPath = os.path.join(projectDir, 'Main')
+        pyModules = self._listPyModules(mainPath)
+        result = style.check_files(pyModules)
         self.assertEqual(result.total_errors, 0, 'Found style errors!')
-        
-        
+
+    def _listPyModules(self, path):
+        filesList = []
+        allFileList = [(dir,file) for dir, b, file in os.walk(path)]
+        ## TODO: filter files for *.py
+        pyList = [py for sublist in allFileList for py in sublist if 'py' in py]
+        return pyList
+
 if __name__ == '__main__':
-    TestCodeStyle()
+    TestCodeStyle().runTest()
