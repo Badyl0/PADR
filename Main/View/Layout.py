@@ -3,8 +3,8 @@ Created on 28 mar 2019
 
 @author: Marcin
 '''
-from tkinter import *
-from tkinter import ttk
+from Tkinter import *
+import ttk
 
 
 class Layout():
