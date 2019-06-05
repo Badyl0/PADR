@@ -20,10 +20,11 @@ class TestCodeStyle(TestCase):
         self.assertEqual(result.total_errors, 0, 'Found style errors!')
 
     def _listPyModules(self, path):
-        filesList = []
+        #filesList = []
         allFileList = [(dir,file) for dir, b, file in os.walk(path)]
         ## TODO: filter files for *.py
-        pyList = [py for sublist in allFileList for py in sublist if 'py' in py]
+        pyList = [os.path.join(str,file) for (str,files) in allFileList
+                  for file in files if 'py' in file]
         return pyList
 
 if __name__ == '__main__':
