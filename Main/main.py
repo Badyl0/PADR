@@ -1,10 +1,10 @@
-from Tkinter import Tk
+from Utils.tkinterImport import tkinter
 from View.Layout import Layout
 
 
 class Main():
     def __init__(self):
-        MainWindow = Tk()
+        MainWindow = tkinter.Tk()
         layoutHandler = Layout(MainWindow)
         MainWindow.mainloop()
 
