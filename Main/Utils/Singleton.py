@@ -3,6 +3,8 @@ Created on Jul 5, 2019
 
 @author: MPytel
 '''
+
+
 class BorgSingleton():
     _sharedState = {}
 

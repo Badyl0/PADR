@@ -21,10 +21,11 @@ class TestCodeStyle(TestCase):
 
     def _listPyModules(self, path):
         #filesList = []
-        allFileList = [(dir,file) for dir, b, file in os.walk(path)]
+        allFileList = [(dir,file) for dir, b, file in os.walk(path)
+                       if '__' not in dir]
         ## TODO: filter files for *.py
-        pyList = [os.path.join(str,file) for (str,files) in allFileList
-                  for file in files if 'py' in file]
+        pyList = [os.path.join(str, file) for (str, files) in allFileList
+                  for file in files if ('.py' in file and '__' not in file)]
         return pyList
 
 if __name__ == '__main__':
