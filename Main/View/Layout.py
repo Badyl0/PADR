@@ -3,8 +3,9 @@ Created on 28 mar 2019
 
 @author: Marcin
 '''
-from Utils.tkinterImport import tkinter, ttk
+from Utils.tkinterImport import tkinter, ttk, constants
 from Utils.Random import debugStatement, dev
+
 
 
 class Layout():
@@ -24,21 +25,30 @@ class Layout():
             self._listingRecordsField = ListingRecordsField(
                 mainframe,
                 self.displayRecords)
+        self._onExitAction()
 
     def startMainLoop(self):
         self.MainWindow.mainloop()
+
+    def _onExitAction(self):
+        from Controller.Controller import Controller
+        self.MainWindow.protocol("WM_DELETE_WINDOW", Controller().exit)
 
     def newRecordAction(self):
         from View.View import View
         debugStatement(2, 'adding record')
 
         view = View()
-        view.addRecord(self._RecordField.productName.get())
+        recordFields = {'price': self._RecordField.productName.get(),
+                        }
+        view.addRecord(recordFields)
+        self._RecordField.productName.set("")
 
     def displayRecords(self):
         from View.View import View
         view = View()
-        self._listingRecordsField.recordList.set(view.listRecords())
+        self._listingRecordsField.recordDisplay.insert(constants.INSERT,
+                                                       view.listRecords())
 
 class BasicField():
     def __init__(self, frame):
@@ -59,9 +69,8 @@ class NewRecordField(BasicField):
 class ListingRecordsField(BasicField):
     def __init__(self, frame, action):
         self.recordList = tkinter.StringVar()
-        recordDisplay = ttk.Entry(frame, width=100, height=50,
-                                     textvariable=self.recordList)
-        recordDisplay.grid(row=4)
+        self.recordDisplay = tkinter.Text(frame, width=100, height=50)
+        self.recordDisplay.grid(row=4)
         ttk.Button(frame, text='PokazWpisy', command=action). grid(row=2,
                                                                    column=3)
         

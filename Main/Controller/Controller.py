@@ -26,3 +26,7 @@ class Controller(BorgSingleton):
 
     def listRecords(self):
         return self._Model.listRecords()
+
+    def exit(self):
+        self._Model.saveRecords()
+        self._View.mainView.MainWindow.destroy()
