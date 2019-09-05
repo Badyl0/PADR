@@ -6,6 +6,8 @@ Created on Jul 5, 2019
 config_vars = {'verbo': 2}
 dev = 1
 
+unitsList = ['ml', 'kg', 'pcs', 'l']
+
 
 def debugStatement(verbosity, msg, prefix=''):
     if(config_vars['verbo'] >= verbosity):

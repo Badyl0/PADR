@@ -22,12 +22,14 @@ class Model(BorgSingleton):
         debugStatement(1, 'New record created!', __name__)
 
     def listRecords(self):
-        records = ''
+        headers = self.storage.fieldnames
+        records = []
         for record in self._recordList:
-            records += record.productName + ('\t%s' % record.price) +'\n'
-            
-            debugStatement(1, record.price, 'Record')
-        return records
+            records.append([])
+            for field in record.__dict__.values():
+                records[-1].append(field)
+        #debugStatement(1, record.__dict__, 'Record')
+        return (headers, records)
 
     def _createStorage(self, name):
         return open(name, 'w')
@@ -46,11 +48,18 @@ class Record:
         self.price = 0
         self.shop = ''
         self.pricePerSingleUnit = 0
-        self.dateOfBought = ''
+        self.dateOfPurchase = ''
         self.category = ''
 
     def set(self, recordParams):
+        for key in recordParams:
+            self.__dict__[key] = recordParams[key]
+        '''
+        self.productName = recordParams['productName']
         self.price = recordParams['price']
+        self.unit = recordParams['unit']
+        self.quantity = recordParams['quantity']
+        '''
         debugStatement(2, "I'm a new record! %s" % self.productName)
         return self
 
