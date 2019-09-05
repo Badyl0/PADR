@@ -45,12 +45,24 @@ class Layout():
         self._RecordField.clear()
         self._RecordField.productName.set("")
 
+    def _maxLen(self, iterable):
+        iterableLen = [len(each) for each in iterable]
+        return max(iterableLen)
+            
+
     def displayRecords(self):
         from View.View import View
         view = View()
         headers, records = view.listRecords()
-        columns = records.insert(0, headers)
         columns = [*zip(*records)]
+        columnsSize = [self._maxLen(column) for column in columns]
+        toDisplay = ''
+        lineIndex = 0
+        for i, header in enumerate(headers):
+            toDisplay += header
+            lineIndex += len(header)
+            if lineIndes < columnsSize[i]:
+                pass
         '''
         TBD: check len of column, pretty print list
         '''
