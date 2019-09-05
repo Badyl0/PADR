@@ -53,20 +53,35 @@ class Layout():
     def displayRecords(self):
         from View.View import View
         view = View()
+        
+        self._listingRecordsField.recordDisplay.delete(1.0, constants.END)
         headers, records = view.listRecords()
-        columns = [*zip(*records)]
+        tmp = list(records)
+        tmp.insert(0, headers)
+        columns = [*zip(*tmp)]
         columnsSize = [self._maxLen(column) for column in columns]
         toDisplay = ''
-        lineIndex = 0
-        for i, header in enumerate(headers):
-            toDisplay += header
-            lineIndex += len(header)
-            if lineIndes < columnsSize[i]:
-                pass
-        '''
-        TBD: check len of column, pretty print list
-        '''
-        pass
+        toDisplay += self._displayRow(headers, columnsSize)
+        for record in records:
+            toDisplay += self._displayRow(record, columnsSize)
+        self._listingRecordsField.recordDisplay.insert(constants.INSERT,
+                                                       toDisplay)
+
+    def _displayRow(self, row, columnsSize):
+        rowString = ''
+        for i, element in enumerate(row):
+            columnLen = 0
+            rowString += element
+            columnLen = len(element)
+            if columnLen <= columnsSize[i]:
+                rowString += ' ' * (columnsSize[i] - columnLen)
+            elif columnLen > columnsSize[i]:
+                raise ValueError('Column size for pretty print was wrongly'
+                                 + ' calculated')
+            rowString += ' |' 
+        rowString += '\n'
+        return rowString
+                
 
 class BasicField():
     def __init__(self, frame):
@@ -76,33 +91,60 @@ class BasicField():
 class NewRecordField(BasicField):
     def __init__(self, frame, action):
         self.productName = tkinter.StringVar(name='productName')
-        self.price = tkinter.StringVar(name='price')
-        self.unit = tkinter.StringVar(name='unit')
         self.quantity = tkinter.StringVar(name='quantity')
+        self.unit = tkinter.StringVar(name='unit')
+        self.price = tkinter.StringVar(name='price')
+        self.shop = tkinter.StringVar(name='shop')
+        #self.pricePerSingleUnit = tkinter.StringVar(name='pricePerSingleUnit')
+        self.dateOfPurchase = tkinter.StringVar(name='dateOfPurchase')
+        self.category = tkinter.StringVar(name='category')
 
         ttk.Label(frame, text='ProductName').grid(
-            column=1, row=1, sticky=(tkinter.W, tkinter.E))
-        ttk.Entry(frame, width=20, textvariable=self.productName).grid(
-            column=1, row=2, sticky=(tkinter.W, tkinter.E))
-
-        ttk.Label(frame, text='Price').grid(
-            column=2, row=1, sticky=(tkinter.W, tkinter.E))
-        ttk.Entry(frame, width=20, textvariable=self.price).grid(
-            column=2, row=2, sticky=(tkinter.W, tkinter.E))
-
-        ttk.Label(frame, text='Unit').grid(
-            column=3, row=1, sticky=(tkinter.W, tkinter.E))
-        ttk.Combobox(frame, width=20, textvariable=self.unit,
-                     values=unitsList).grid(
-            column=3, row=2, sticky=(tkinter.W, tkinter.E))
+            column=0, row=1, sticky=(tkinter.W, tkinter.E))
+        ttk.Entry(frame, width=10, textvariable=self.productName).grid(
+            column=0, row=2, sticky=(tkinter.W, tkinter.E))
 
         ttk.Label(frame, text='Quantity').grid(
+            column=1, row=1, sticky=(tkinter.W, tkinter.E))
+        ttk.Entry(frame, width=3, textvariable=self.quantity).grid(
+            column=1, row=2, sticky=(tkinter.W, tkinter.E))
+
+        ttk.Label(frame, text='Unit').grid(
+            column=2, row=1, sticky=(tkinter.W, tkinter.E))
+        ttk.Combobox(frame, width=3, textvariable=self.unit,
+                    values=unitsList).grid(
+            column=2, row=2, sticky=(tkinter.W, tkinter.E))
+
+        ttk.Label(frame, text='Price').grid(
+            column=3, row=1, sticky=(tkinter.W, tkinter.E))
+        ttk.Entry(frame, width=4, textvariable=self.price).grid(
+            column=3, row=2, sticky=(tkinter.W, tkinter.E))
+        
+        ttk.Label(frame, text='Shop').grid(
             column=4, row=1, sticky=(tkinter.W, tkinter.E))
-        ttk.Entry(frame, width=10, textvariable=self.quantity).grid(
+        ttk.Entry(frame, width=10, textvariable=self.shop).grid(
             column=4, row=2, sticky=(tkinter.W, tkinter.E))
 
+        '''
+        ttk.Label(frame, text='PricePerSingleUnit').grid(
+            column=5, row=1, sticky=(tkinter.W, tkinter.E))
+        ttk.Entry(frame, width=4, textvariable=self.pricePerSingleUnit).grid(
+            column=5, row=2, sticky=(tkinter.W, tkinter.E))
+        '''
+        
+        ttk.Label(frame, text='dateOfPurchase').grid(
+            column=6, row=1, sticky=(tkinter.W, tkinter.E))
+        ttk.Entry(frame, width=10, textvariable=self.dateOfPurchase).grid(
+            column=6, row=2, sticky=(tkinter.W, tkinter.E))
+
+        ttk.Label(frame, text='category').grid(
+            column=7, row=1, sticky=(tkinter.W, tkinter.E))
+        ttk.Entry(frame, width=10, textvariable=self.category).grid(
+            column=7, row=2, sticky=(tkinter.W, tkinter.E))
+
+
         ttk.Button(frame, text='AddRecord', command=action).grid(
-                   column=5, row=2, sticky=(tkinter.N, tkinter.E))
+                   column=8, row=2, sticky=(tkinter.N, tkinter.E))
 
     def clear(self):
         for Var in self.__dict__.items():
@@ -113,7 +155,7 @@ class ListingRecordsField(BasicField):
     def __init__(self, frame, action):
         self.recordList = tkinter.StringVar()
         self.recordDisplay = tkinter.Text(frame, width=100, height=10)
-        self.recordDisplay.grid(column=0,row=5, columnspan=4)
-        ttk.Button(frame, text='ShowRecords', command=action). grid(row=5,
-                                                                   column=3)
+        self.recordDisplay.grid(column=0, row=5, columnspan=8)
+        ttk.Button(frame, text='ShowRecords', command=action).grid(row=5,
+                                                                   column=8)
         

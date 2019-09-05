@@ -54,14 +54,25 @@ class Record:
     def set(self, recordParams):
         for key in recordParams:
             self.__dict__[key] = recordParams[key]
-        '''
-        self.productName = recordParams['productName']
-        self.price = recordParams['price']
-        self.unit = recordParams['unit']
-        self.quantity = recordParams['quantity']
-        '''
+        self._calculatePricePerUnit()
         debugStatement(2, "I'm a new record! %s" % self.productName)
         return self
+    
+    def _calculatePricePerUnit(self):
+        price = float(self.price)
+        quantity = float(self.quantity)
+        if self.unit == 'pcs':
+            pricePerUnit = price / quantity
+            sufix = ' per 1 pc'
+        elif (self.unit == 'l' or self.unit == 'kg'):
+            # unit = 100
+            pricePerUnit = price / (quantity / 0.1)
+            sufix = ' per 100 %s' % self.unit 
+        elif (self.unit == 'ml' or self.unit == 'g'):
+            pricePerUnit = price / (quantity / 100)
+            sufix = ' per 100 %s' % self.unit
+        self.pricePerSingleUnit = str(pricePerUnit) + sufix
+            
 
 class Storage(BorgSingleton):
     def __init__(self):
