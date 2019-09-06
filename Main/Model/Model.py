@@ -11,8 +11,10 @@ from csv import DictWriter, DictReader
 class Model(BorgSingleton):
     def __init__(self):
         BorgSingleton.__init__(self)
+        self._nextRecordID = 0
         self.storage = Storage()
         self._recordList = self.storage.loadStoredRecords()
+        self._setNextRecordID()
         self.storage.open()
 
     def newRecord(self, recordParams):
@@ -39,9 +41,15 @@ class Model(BorgSingleton):
     def saveRecords(self):
         self.storage.close()
 
+    def _setNextRecordID(self):
+        recordsIDs = [int(record.ID) for record in self._recordList]
+        if any(recordsIDs):
+            self._nextRecordID = max(recordsIDs) + 1
+
 
 class Record:
     def __init__(self):
+        self.ID = 0
         self.productName = ''
         self.quantity = 0
         self.unit = ''

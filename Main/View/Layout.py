@@ -20,10 +20,10 @@ class Layout():
         self.MainWindow.rowconfigure(0, weight=1)
         self._RecordField = NewRecordField(mainframe,
                                            self.newRecordAction)
-        if dev:
-            self._listingRecordsField = ListingRecordsField(
-                mainframe,
-                self.displayRecords)
+        self._listingRecordsField = ListingRecordsField(
+            mainframe,
+            self.displayRecords)
+        self._editRecordField = EditRecordField()
         self._onExitAction()
 
     def startMainLoop(self):
@@ -147,3 +147,8 @@ class ListingRecordsField(BasicField):
         self.recordDisplay.grid(column=0, row=5, columnspan=8)
         ttk.Button(frame, text='ShowRecords', command=action).grid(row=5,
                                                                    column=8)
+
+
+class EditRecordField(BasicField):
+    def __init__(self,frame, showRecordAction, updateAction):
+        pass
