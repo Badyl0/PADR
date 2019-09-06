@@ -4,7 +4,7 @@ Created on Jul 5, 2019
 @author: MPytel
 '''
 from Utils.Singleton import BorgSingleton
-from Utils.Random import debugStatement
+from Utils.Random import debugStatement, truncate
 from csv import DictWriter, DictReader
 
 
@@ -28,7 +28,6 @@ class Model(BorgSingleton):
             records.append([])
             for field in record.__dict__.values():
                 records[-1].append(field)
-        #debugStatement(1, record.__dict__, 'Record')
         return (headers, records)
 
     def _createStorage(self, name):
@@ -39,6 +38,7 @@ class Model(BorgSingleton):
 
     def saveRecords(self):
         self.storage.close()
+
 
 class Record:
     def __init__(self):
@@ -57,22 +57,26 @@ class Record:
         self._calculatePricePerUnit()
         debugStatement(2, "I'm a new record! %s" % self.productName)
         return self
-    
+
     def _calculatePricePerUnit(self):
         price = float(self.price)
         quantity = float(self.quantity)
         if self.unit == 'pcs':
-            pricePerUnit = price / quantity
+            pricePerUnit = truncate(price / quantity, 100)
             sufix = ' per 1 pc'
         elif (self.unit == 'l' or self.unit == 'kg'):
             # unit = 100
-            pricePerUnit = price / (quantity / 0.1)
-            sufix = ' per 100 %s' % self.unit 
+            pricePerUnit = truncate(price / (quantity / 0.1), 100)
+            if self.unit == 'l':
+                unit = 'ml'
+            elif self.unit == 'kg':
+                unit = 'g'
+            sufix = ' per 100 %s' % unit
         elif (self.unit == 'ml' or self.unit == 'g'):
-            pricePerUnit = price / (quantity / 100)
+            pricePerUnit = truncate(price / (quantity / 100), 100)
             sufix = ' per 100 %s' % self.unit
         self.pricePerSingleUnit = str(pricePerUnit) + sufix
-            
+
 
 class Storage(BorgSingleton):
     def __init__(self):
@@ -94,4 +98,3 @@ class Storage(BorgSingleton):
 
     def writeln(self, recordDict):
         self.csvWriter.writerow(recordDict)
-

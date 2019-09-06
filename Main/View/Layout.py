@@ -7,7 +7,6 @@ from Utils.tkinterImport import tkinter, ttk, constants
 from Utils.Random import debugStatement, dev, unitsList
 
 
-
 class Layout():
     def __init__(self, ):
         self.MainWindow = tkinter.Tk()
@@ -39,7 +38,7 @@ class Layout():
         debugStatement(2, 'adding record')
 
         view = View()
-        recordFields = dict([(var._name, var.get()) for var 
+        recordFields = dict([(var._name, var.get()) for var
                              in self._RecordField.__dict__.values()])
         view.addRecord(recordFields)
         self._RecordField.clear()
@@ -48,12 +47,11 @@ class Layout():
     def _maxLen(self, iterable):
         iterableLen = [len(each) for each in iterable]
         return max(iterableLen)
-            
 
     def displayRecords(self):
         from View.View import View
         view = View()
-        
+
         self._listingRecordsField.recordDisplay.delete(1.0, constants.END)
         headers, records = view.listRecords()
         tmp = list(records)
@@ -78,10 +76,10 @@ class Layout():
             elif columnLen > columnsSize[i]:
                 raise ValueError('Column size for pretty print was wrongly'
                                  + ' calculated')
-            rowString += ' |' 
+            rowString += ' |'
         rowString += '\n'
         return rowString
-                
+
 
 class BasicField():
     def __init__(self, frame):
@@ -95,7 +93,6 @@ class NewRecordField(BasicField):
         self.unit = tkinter.StringVar(name='unit')
         self.price = tkinter.StringVar(name='price')
         self.shop = tkinter.StringVar(name='shop')
-        #self.pricePerSingleUnit = tkinter.StringVar(name='pricePerSingleUnit')
         self.dateOfPurchase = tkinter.StringVar(name='dateOfPurchase')
         self.category = tkinter.StringVar(name='category')
 
@@ -112,26 +109,19 @@ class NewRecordField(BasicField):
         ttk.Label(frame, text='Unit').grid(
             column=2, row=1, sticky=(tkinter.W, tkinter.E))
         ttk.Combobox(frame, width=3, textvariable=self.unit,
-                    values=unitsList).grid(
+                     values=unitsList).grid(
             column=2, row=2, sticky=(tkinter.W, tkinter.E))
 
         ttk.Label(frame, text='Price').grid(
             column=3, row=1, sticky=(tkinter.W, tkinter.E))
         ttk.Entry(frame, width=4, textvariable=self.price).grid(
             column=3, row=2, sticky=(tkinter.W, tkinter.E))
-        
+
         ttk.Label(frame, text='Shop').grid(
             column=4, row=1, sticky=(tkinter.W, tkinter.E))
         ttk.Entry(frame, width=10, textvariable=self.shop).grid(
             column=4, row=2, sticky=(tkinter.W, tkinter.E))
 
-        '''
-        ttk.Label(frame, text='PricePerSingleUnit').grid(
-            column=5, row=1, sticky=(tkinter.W, tkinter.E))
-        ttk.Entry(frame, width=4, textvariable=self.pricePerSingleUnit).grid(
-            column=5, row=2, sticky=(tkinter.W, tkinter.E))
-        '''
-        
         ttk.Label(frame, text='dateOfPurchase').grid(
             column=6, row=1, sticky=(tkinter.W, tkinter.E))
         ttk.Entry(frame, width=10, textvariable=self.dateOfPurchase).grid(
@@ -141,7 +131,6 @@ class NewRecordField(BasicField):
             column=7, row=1, sticky=(tkinter.W, tkinter.E))
         ttk.Entry(frame, width=10, textvariable=self.category).grid(
             column=7, row=2, sticky=(tkinter.W, tkinter.E))
-
 
         ttk.Button(frame, text='AddRecord', command=action).grid(
                    column=8, row=2, sticky=(tkinter.N, tkinter.E))
@@ -158,4 +147,3 @@ class ListingRecordsField(BasicField):
         self.recordDisplay.grid(column=0, row=5, columnspan=8)
         ttk.Button(frame, text='ShowRecords', command=action).grid(row=5,
                                                                    column=8)
-        

@@ -12,3 +12,7 @@ unitsList = ['ml', 'kg', 'pcs', 'l', 'g']
 def debugStatement(verbosity, msg, prefix=''):
     if(config_vars['verbo'] >= verbosity):
         print(prefix + ': ' + msg)
+
+
+def truncate(n, decimals=0):
+    return int(n * decimals) / decimals
