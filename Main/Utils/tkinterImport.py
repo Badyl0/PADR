@@ -11,4 +11,5 @@ if python.major is 3:
     import tkinter.ttk as ttk
     import tkinter.constants as constants
 elif python.major is 2:
+    raise Exception("Python interpreter version 2!")
     import Tkinter as tkinter

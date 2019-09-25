@@ -23,7 +23,9 @@ class Layout():
         self._listingRecordsField = ListingRecordsField(
             mainframe,
             self.displayRecords)
-        self._editRecordField = EditRecordField()
+        self._editRecordField = EditRecordField(mainframe,
+                                                self.showRecordAction,
+                                                self.updateRecord)
         self._onExitAction()
 
     def startMainLoop(self):
@@ -54,7 +56,8 @@ class Layout():
 
         self._listingRecordsField.recordDisplay.delete(1.0, constants.END)
         headers, records = view.listRecords()
-        tmp = list(records)
+        tmp = []
+        tmp.append(*records)
         tmp.insert(0, headers)
         columns = [*zip(*tmp)]
         columnsSize = [self._maxLen(column) for column in columns]
@@ -80,6 +83,20 @@ class Layout():
         rowString += '\n'
         return rowString
 
+    def showRecordAction(self):
+        from Controller.Controller import Controller
+        controller = Controller()
+        result = controller.showRecordById(self._editRecordField.id.get())
+        for key, item in self._editRecordField.__dict__.items():
+            item.set(result[key])
+
+    def updateRecord(self):
+        from Controller.Controller import Controller
+        controller = Controller()
+        fields = {}
+        for key, item in self._editRecordField.__dict__.items():
+            fields.update({key: item.get()})
+        controller.updateRecord(fields)
 
 class BasicField():
     def __init__(self, frame):
@@ -151,4 +168,59 @@ class ListingRecordsField(BasicField):
 
 class EditRecordField(BasicField):
     def __init__(self,frame, showRecordAction, updateAction):
-        pass
+        self.id = tkinter.StringVar()
+        self.productName = tkinter.StringVar()
+        self.quantity = tkinter.StringVar()
+        self.unit = tkinter.StringVar()
+        self.price = tkinter.StringVar()
+        self.shop = tkinter.StringVar()
+        self.dateOfPurchase = tkinter.StringVar()
+        self.category = tkinter.StringVar()
+
+        ttk.Label(frame, text='ID').grid(
+            column=0, row=6, sticky=(tkinter.W, tkinter.E))
+        ttk.Entry(frame, width=5, textvariable=self.id).grid(
+            column=0, row=7, sticky=(tkinter.W, tkinter.E))
+
+        ttk.Label(frame, text='ProductName').grid(
+            column=1, row=6, sticky=(tkinter.W, tkinter.E))
+        ttk.Entry(frame, width=10, textvariable=self.productName).grid(
+            column=1, row=7, sticky=(tkinter.W, tkinter.E))
+
+        ttk.Label(frame, text='Quantity').grid(
+            column=2, row=6, sticky=(tkinter.W, tkinter.E))
+        ttk.Entry(frame, width=3, textvariable=self.quantity).grid(
+            column=2, row=7, sticky=(tkinter.W, tkinter.E))
+
+        ttk.Label(frame, text='Unit').grid(
+            column=3, row=6, sticky=(tkinter.W, tkinter.E))
+        ttk.Combobox(frame, width=3, textvariable=self.unit,
+                     values=unitsList).grid(
+            column=3, row=7, sticky=(tkinter.W, tkinter.E))
+
+        ttk.Label(frame, text='Price').grid(
+            column=4, row=6, sticky=(tkinter.W, tkinter.E))
+        ttk.Entry(frame, width=4, textvariable=self.price).grid(
+            column=4, row=7, sticky=(tkinter.W, tkinter.E))
+
+        ttk.Label(frame, text='Shop').grid(
+            column=5, row=6, sticky=(tkinter.W, tkinter.E))
+        ttk.Entry(frame, width=10, textvariable=self.shop).grid(
+            column=5, row=7, sticky=(tkinter.W, tkinter.E))
+
+        ttk.Label(frame, text='dateOfPurchase').grid(
+            column=6, row=6, sticky=(tkinter.W, tkinter.E))
+        ttk.Entry(frame, width=10, textvariable=self.dateOfPurchase).grid(
+            column=6, row=7, sticky=(tkinter.W, tkinter.E))
+
+        ttk.Label(frame, text='category').grid(
+            column=7, row=6, sticky=(tkinter.W, tkinter.E))
+        ttk.Entry(frame, width=10, textvariable=self.category).grid(
+            column=7, row=7, sticky=(tkinter.W, tkinter.E))
+
+        ttk.Button(frame, text='ShowRecord', command=showRecordAction).grid(
+                   column=8, row=7, sticky=(tkinter.N, tkinter.E))
+
+        ttk.Button(frame, text='UpdateRecord', command=updateAction).grid(
+                   column=8, row=8, sticky=(tkinter.N, tkinter.E))
+

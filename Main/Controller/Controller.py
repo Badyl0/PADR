@@ -30,3 +30,14 @@ class Controller(BorgSingleton):
     def exit(self):
         self._Model.saveRecords()
         self._View.mainView.MainWindow.destroy()
+
+    def showRecordById(self, id):
+        result = None
+        try:
+            result = self._Model.getRecordFields(id=id)
+        except KeyError as e:
+            print(e.args[0])
+        return result
+
+    def updateRecord(self, fields):
+        self._Model.updateRecord(fields)

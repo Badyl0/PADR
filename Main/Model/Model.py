@@ -18,19 +18,44 @@ class Model(BorgSingleton):
         self.storage.open()
 
     def newRecord(self, recordParams):
+        recordParams.update({'id': self._nextRecordID})
         record = Record().set(recordParams)
         self._recordList.append(record)
         self._updateStorage(record)
         debugStatement(1, 'New record created!', __name__)
 
+    def getRecordFields(self, id=None):
+        if id is not None:
+            for record in self._recordList:
+                if record.id == id:
+                    return record.__dict__
+            raise KeyError("Record %s doesn't exist!" % id)
+
+    def getRecord(self, id=None):
+        if id is not None:
+            for record in self._recordList:
+                if record.id == id:
+                    return record
+            raise KeyError("Record %s doesn't exist!" % id)
+
+    def updateRecord(self, fields):
+        record = self.getRecord(fields['id'])
+        del fields['id']
+        record.set(fields)
+
     def listRecords(self):
         headers = self.storage.fieldnames
         records = []
         for record in self._recordList:
-            records.append([])
-            for field in record.__dict__.values():
-                records[-1].append(field)
+            #records.append([])
+            records.append(self.getSingleRecordFields(record))
         return (headers, records)
+
+    def getSingleRecordFields(self, record):
+        fieldList = []
+        for field in record.__dict__.values():
+                fieldList.append(field)
+        return fieldList
 
     def _createStorage(self, name):
         return open(name, 'w')
@@ -42,14 +67,14 @@ class Model(BorgSingleton):
         self.storage.close()
 
     def _setNextRecordID(self):
-        recordsIDs = [int(record.ID) for record in self._recordList]
+        recordsIDs = [int(record.id) for record in self._recordList]
         if any(recordsIDs):
             self._nextRecordID = max(recordsIDs) + 1
 
 
 class Record:
     def __init__(self):
-        self.ID = 0
+        self.id = 0
         self.productName = ''
         self.quantity = 0
         self.unit = ''
@@ -84,6 +109,8 @@ class Record:
             pricePerUnit = truncate(price / (quantity / 100), 100)
             sufix = ' per 100 %s' % self.unit
         self.pricePerSingleUnit = str(pricePerUnit) + sufix
+
+    
 
 
 class Storage(BorgSingleton):
